@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Planning and Forecasting</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+        .input-section, .topic-section, .forecast-section {
+            margin: 20px 0;
+        }
+        .input-section input, .input-section textarea, .topic-section select, .forecast-section select, .forecast-section p {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        .forecast-details {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Transportation Planning and Forecasting</h1>
+    <div id="map"></div>
+
+    <div class="input-section">
+        <h2>Optimization Inputs</h2>
+        <input type="text" id="travelTimes" placeholder="Travel Times">
+        <input type="text" id="frequency" placeholder="Frequency">
+        <input type="text" id="walkingTimes" placeholder="Walking Times">
+        <input type="text" id="fares" placeholder="Fares">
+        <input type="text" id="operatingTimes" placeholder="Operating Times">
+        <input type="text" id="performanceKilometers" placeholder="Performance Kilometers">
+        <input type="text" id="emptyRuns" placeholder="Empty Runs">
+        <input type="text" id="depotUse" placeholder="Depot Use">
+        <input type="text" id="vehicleRequirements" placeholder="Vehicle Requirements">
+    </div>
+
+    <div class="input-section">
+        <h2>Activity Based Modeling Inputs</h2>
+        <input type="text" id="households" placeholder="Households">
+        <input type="text" id="persons" placeholder="Persons">
+        <input type="text" id="tours" placeholder="Tours">
+        <input type="text" id="trips" placeholder="Trips">
+    </div>
+
+    <div class="input-section">
+        <h2>Infrastructure Developments</h2>
+        <input type="text" id="newTransitLines" placeholder="New Transit Lines">
+        <input type="text" id="populationForecasts" placeholder="Population Forecasts">
+        <textarea id="zoningPolicies" placeholder="Zoning Policies"></textarea>
+    </div>
+
+    <div class="forecast-section">
+        <h2>Four-Step Model for Transportation Forecasting</h2>
+        <select id="forecastSteps" onchange="displayForecastDetails()">
+            <option value="">Select a Step</option>
+            <option value="1">Trip Generation</option>
+            <option value="2">Trip Distribution</option>
+            <option value="3">Mode Choice</option>
+            <option value="4">Route Assignment</option>
+        </select>
+        <div id="forecastDetails" class="forecast-details"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([51.505, -0.09], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        function displayForecastDetails() {
+            const steps = {
+                1: `Trip Generation: Determines the frequency of origins or destinations of trips in each zone by trip purpose, as a function of land uses, household demographics, and other socio-economic factors.`,
+                2: `Trip Distribution: Matches origins with destinations, often using a gravity model function. This step estimates the number of trips between each pair of zones.`,
+                3: `Mode Choice: Computes the proportion of trips between each origin and destination that use a particular transportation mode. This step often uses a logit model.`,
+                4: `Route Assignment: Allocates trips between an origin and destination by a particular mode to a route. This step often applies Wardrop's principle of user equilibrium.`
+            };
+
+            const forecastSelect = document.getElementById('forecastSteps');
+            const selectedStep = forecastSelect.value;
+            const details = steps[selectedStep] || "Please select a step to see the details.";
+            const forecastDetails = document.getElementById('forecastDetails');
+            forecastDetails.textContent = details;
+            forecastDetails.style.display = 'block';
+        }
+
+        function tripGeneration() {
+            const landUseData = document.getElementById('landUseData').value;
+            const householdData = document.getElementById('households').value;
+            const populationData = document.getElementById('populationForecasts').value;
+            // Process the trip generation using the data
+            console.log("Trip Generation: ", landUseData, householdData, populationData);
+        }
+
+        function tripDistribution() {
+            const tripData = document.getElementById('tripData').value;
+            // Process the trip distribution using the data
+            console.log("Trip Distribution: ", tripData);
+        }
+
+        function modeChoice() {
+            const modeData = document.getElementById('modeData').value;
+            // Process the mode choice using the data
+            console.log("Mode Choice: ", modeData);
+        }
+
+        function routeAssignment() {
+            const routeData = document.getElementById('routeData').value;
+            // Process the route assignment using the data
+            console.log("Route Assignment: ", routeData);
+        }
+    </script>
+</body>
+</html>
