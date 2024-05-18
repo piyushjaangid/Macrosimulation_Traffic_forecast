@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transport and Traffic Models</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .output {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .formula {
+            font-family: monospace;
+            background-color: #e0e0e0;
+            padding: 5px;
+            display: block;
+            margin-top: 10px;
+        }
+        canvas {
+            margin-top: 20px;
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Transport and Traffic Models</h1>
+
+    <div class="section" id="car-following-model">
+        <h2>Car Following Models</h2>
+        <p><strong>Problem Statement:</strong> Understand and predict the behavior of a follower vehicle based on the movement of a leading vehicle.</p>
+        <div class="input-group">
+            <label for="vn">Speed of Follower (vn):</label>
+            <input type="number" id="vn" value="20">
+        </div>
+        <div class="input-group">
+            <label for="vn1">Speed of Leader (vn1):</label>
+            <input type="number" id="vn1" value="25">
+        </div>
+        <div class="input-group">
+            <label for="sensitivity">Sensitivity Constant (c):</label>
+            <input type="number" id="sensitivity" value="0.5">
+        </div>
+        <button onclick="calculateCarFollowing()">Calculate Car Following</button>
+        <div class="output" id="car-following-output"></div>
+        <canvas id="car-following-chart"></canvas>
+    </div>
+
+    <div class="section" id="queueing-model">
+        <h2>Queueing Models</h2>
+        <p><strong>Problem Statement:</strong> Determine the average queue length and waiting time in different queuing scenarios.</p>
+        <div class="input-group">
+            <label for="lambda">Arrival Rate (λ):</label>
+            <input type="number" id="lambda" value="10">
+        </div>
+        <div class="input-group">
+            <label for="mu">Service Rate (μ):</label>
+            <input type="number" id="mu" value="15">
+        </div>
+        <div class="input-group">
+            <label for="servers">Number of Servers (m):</label>
+            <input type="number" id="servers" value="1">
+        </div>
+        <button onclick="calculateQueueing()">Calculate Queueing</button>
+        <div class="output" id="queueing-output"></div>
+        <canvas id="queueing-chart"></canvas>
+    </div>
+
+    <div class="section" id="capacity-restraint-model">
+        <h2>Capacity Restraint Models</h2>
+        <p><strong>Problem Statement:</strong> Find equilibrium traffic flow considering road capacities and travel demand.</p>
+        <div class="input-group">
+            <label for="flow">Link Flow (xa):</label>
+            <input type="number" id="flow" value="500">
+        </div>
+        <div class="input-group">
+            <label for="freeflow-time">Free-flow Travel Time (ta0):</label>
+            <input type="number" id="freeflow-time" value="10">
+        </div>
+        <div class="input-group">
+            <label for="capacity">Link Capacity (Ca):</label>
+            <input type="number" id="capacity" value="1000">
+        </div>
+        <div class="input-group">
+            <label for="alpha">Alpha (α):</label>
+            <input type="number" id="alpha" value="0.15">
+        </div>
+        <div class="input-group">
+            <label for="beta">Beta (β):</label>
+            <input type="number" id="beta" value="4">
+        </div>
+        <button onclick="calculateCapacityRestraint()">Calculate Capacity Restraint</button>
+        <div class="output" id="capacity-restraint-output"></div>
+        <canvas id="capacity-restraint-chart"></canvas>
+    </div>
+
+    <div class="section" id="traffic-assignment">
+        <h2>Traffic Assignment</h2>
+        <p><strong>Problem Statement:</strong> Determine the distribution of traffic across a network to minimize overall travel cost.</p>
+        <div class="input-group">
+            <label for="demand">Total Demand (Q):</label>
+            <input type="number" id="demand" value="1000">
+        </div>
+        <div class="input-group">
+            <label for="c1">Cost Function for Route 1 (c1):</label>
+            <input type="text" id="c1" value="10 + 0.02*x1">
+        </div>
+        <div class="input-group">
+            <label for="c2">Cost Function for Route 2 (c2):</label>
+            <input type="text" id="c2" value="15 + 0.005*x2">
+        </div>
+        <button onclick="calculateTrafficAssignment()">Calculate Traffic Assignment</button>
+        <div class="output" id="traffic-assignment-output"></div>
+        <canvas id="traffic-assignment-chart"></canvas>
+    </div>
+
+    <div class="section" id="gravity-model">
+        <h2>Gravity Models</h2>
+        <p><strong>Problem Statement:</strong> Estimate the number of trips between origin and destination zones based on the attractiveness and separation of zones.</p>
+        <div class="input-group">
+            <label for="Oi">Trip Production (Oi):</label>
+            <input type="number" id="Oi" value="500">
+        </div>
+        <div class="input-group">
+            <label for="Dj">Trip Attraction (Dj):</label>
+            <input type="number" id="Dj" value="400">
+        </div>
+        <div class="input-group">
+            <label for="cij">Travel Cost (cij):</label>
+            <input type="number" id="cij" value="10">
+        </div>
+        <div class="input-group">
+            <label for="K">Balancing Factor (K):</label>
+            <input type="number" id="K" value="1">
+        </div>
+        <button onclick="calculateGravityModel()">Calculate Gravity Model</button>
+        <div class="output" id="gravity-model-output"></div>
+        <canvas id="gravity-model-chart"></canvas>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let carFollowingChart, queueingChart, capacityRestraintChart, trafficAssignmentChart, gravityModelChart;
+
+    function calculateCarFollowing() {
+        const vn = parseFloat(document.getElementById('vn').value);
+        const vn1 = parseFloat(document.getElementById('vn1').value);
+        const c = parseFloat(document.getElementById('sensitivity').value);
+        const an = c * (vn - vn1);
+        document.getElementById('car-following-output').innerHTML = `
+            <p><strong>Formula:</strong> a_n(t) = c * [v_n(t) - v_{n-1}(t)]</p>
+            <p>Acceleration of follower: a = ${c} * (${vn} - ${vn1}) = ${an} m/s²</p>
+        `;
+
+        // Plot graph
+        const ctx = document.getElementById('car-following-chart').getContext('2d');
+        if (carFollowingChart) carFollowingChart.destroy();
+        carFollowingChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Follower Speed', 'Leader Speed'],
+                datasets: [{
+                    label: 'Speed',
+                    data: [vn, vn1],
+                    backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Speed (m/s)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function calculateQueueing() {
+        const lambda = parseFloat(document.getElementById('lambda').value);
+        const mu = parseFloat(document.getElementById('mu').value);
+        const m = parseFloat(document.getElementById('servers').value);
+        let L;
+
+        if (m === 1) {
+            L = lambda / (mu - lambda);
+            document.getElementById('queueing-output').innerHTML = `
+                <p><strong>Formula:</strong> L = λ / (μ - λ)</p>
+                <p>Average number of items in the queue (L): ${lambda} / (${mu} - ${lambda}) = ${L.toFixed(2)}</p>
+            `;
+        } else {
+            const rho = lambda / (m * mu);
+            const P0 = (1 - rho) / (1 - Math.pow(rho, m + 1));
+            L = Math.pow(lambda / mu, m) / (m * (1 - rho) * (1 - rho)) * P0;
+            document.getElementById('queueing-output').innerHTML = `
+                <p><strong>Formula:</strong> L = (λ / μ)^m / [m! * (1 - ρ)^2] * P0</p>
+                <p>ρ = λ / (m * μ) = ${lambda} / (${m} * ${mu}) = ${rho.toFixed(2)}</p>
+                <p>P0 = (1 - ρ) / (1 - ρ^(m + 1)) = (1 - ${rho.toFixed(2)}) / (1 - ${Math.pow(rho, m + 1).toFixed(2)}) = ${P0.toFixed(2)}</p>
+                <p>Average number of items in the queue (L): ${L.toFixed(2)}</p>
+            `;
+        }
+
+        // Plot graph
+        const ctx = document.getElementById('queueing-chart').getContext('2d');
+        if (queueingChart) queueingChart.destroy();
+        queueingChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Service Rate (μ)'],
+                datasets: [{
+                    label: 'Queue Length',
+                    data: [L],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: ['Service Rate']
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Queue Length'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function calculateCapacityRestraint() {
+        const xa = parseFloat(document.getElementById('flow').value);
+        const ta0 = parseFloat(document.getElementById('freeflow-time').value);
+        const Ca = parseFloat(document.getElementById('capacity').value);
+        const alpha = parseFloat(document.getElementById('alpha').value);
+        const beta = parseFloat(document.getElementById('beta').value);
+        const ta = ta0 * (1 + alpha * Math.pow(xa / Ca, beta));
+        document.getElementById('capacity-restraint-output').innerHTML = `
+            <p><strong>Formula:</strong> t_a = t_a0 * (1 + α * (x_a / C_a)^β)</p>
+            <p>Travel time (ta): ${ta0} * (1 + ${alpha} * (${xa} / ${Ca})^${beta}) = ${ta.toFixed(2)} units</p>
+        `;
+
+        // Plot graph
+        const ctx = document.getElementById('capacity-restraint-chart').getContext('2d');
+        if (capacityRestraintChart) capacityRestraintChart.destroy();
+        capacityRestraintChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Flow (xa)'],
+                datasets: [{
+                    label: 'Capacity',
+                    data: [Ca],
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    fill: false,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'category',
+                        labels: ['Flow']
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Capacity'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function calculateTrafficAssignment() {
+        const Q = parseFloat(document.getElementById('demand').value);
+        const c1 = document.getElementById('c1').value;
+        const c2 = document.getElementById('c2').value;
+        const x1 = Q / 2;  // Assume equal split for simplicity
+        const x2 = Q - x1;
+        const c1_cost = eval(c1.replace('x1', x1));
+        const c2_cost = eval(c2.replace('x2', x2));
+        document.getElementById('traffic-assignment-output').innerHTML = `
+            <p><strong>Formula:</strong> Cost calculation for each route</p>
+            <p>Route 1: x1 = ${x1}, Cost = ${c1_cost}</p>
+            <p>Route 2: x2 = ${x2}, Cost = ${c2_cost}</p>
+        `;
+
+        // Plot graph
+        const ctx = document.getElementById('traffic-assignment-chart').getContext('2d');
+        if (trafficAssignmentChart) trafficAssignmentChart.destroy();
+        trafficAssignmentChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Route 1', 'Route 2'],
+                datasets: [{
+                    label: 'Cost',
+                    data: [c1_cost, c2_cost],
+                    backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(255, 159, 64, 0.2)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 159, 64, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cost'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function calculateGravityModel() {
+        const Oi = parseFloat(document.getElementById('Oi').value);
+        const Dj = parseFloat(document.getElementById('Dj').value);
+        const cij = parseFloat(document.getElementById('cij').value);
+        const K = parseFloat(document.getElementById('K').value);
+        const Tij = K * Oi * Dj / cij;
+        document.getElementById('gravity-model-output').innerHTML = `
+            <p><strong>Formula:</strong> T_ij = K * (O_i * D_j) / f(c_ij)</p>
+            <p>Trips between zones (Tij): ${K} * (${Oi} * ${Dj}) / ${cij} = ${Tij.toFixed(2)}</p>
+        `;
+
+        // Plot graph
+        const ctx = document.getElementById('gravity-model-chart').getContext('2d');
+        if (gravityModelChart) gravityModelChart.destroy();
+        gravityModelChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Trip Production (Oi)', 'Trip Attraction (Dj)'],
+                datasets: [{
+                    label: 'Trips',
+                    data: [Oi, Dj],
+                    backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(153, 102, 255, 0.2)'],
+                    borderColor: ['rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Trips'
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
